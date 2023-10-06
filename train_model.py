@@ -88,19 +88,19 @@ elif config["NETWORK_SETTINGS"]["NETWORK_SIZE"] == "config_xl":
 else:
    raise ValueError()
 
-model = ConvNetModel(1, net_cfg, len(train_dataset.classes))
+network = ConvNetModel(1, net_cfg, len(train_dataset.classes))
 loss_fn = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters(), 5e-5)
+optimizer = torch.optim.Adam(network.parameters(), 5e-5)
 scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, config["NETWORK_SETTINGS"]["N_EPOCHS"])
 
 for _ in range(config["NETWORK_SETTINGS"]["N_EPOCHS"]):
   print("Epoch: ", _+1)
-  train_loop(train_loader, model, loss_fn, optimizer)
-  test_loop(test_loader, model, loss_fn)
+  train_loop(train_loader, network, loss_fn, optimizer)
+  test_loop(test_loader, network, loss_fn)
   scheduler.step()
 
 print("Save model? (y/n)")
 user_input = input()
 if user_input != "n":
-   torch.save(model.parameters(), os.path.join(config["NETWORK_SETTINGS"]["MODEL_SAVE_PATH"]))
+   torch.save(network.parameters(), os.path.join(config["NETWORK_SETTINGS"]["MODEL_SAVE_PATH"]))
    print("Model saved")

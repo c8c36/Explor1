@@ -1,0 +1,7 @@
+- FINISH main.py INFERENCE
+   - Add inference folder
+   - Add saving of the output
+- PRETRAIN WEIGHTS
+   - train the model on MNIST
+- PROVIDE INFERENCE EXAMPLES
+   - And test em
