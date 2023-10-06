@@ -3,9 +3,9 @@ import os
 import traceback
 import torch
 import utils
+from utils import CONFIG_PATH
 import model
 
-CONFIG_PATH = "config.ini"
 
 def model_factory(cfg):
    if cfg["NETWORK_SETTINGS"]["NETWORK_SIZE"] == "config_t":
@@ -22,16 +22,17 @@ def model_factory(cfg):
       raise ValueError()
 
    predictor = model.ConvNetModel(int(cfg["NETWORK_SETTINGS"]["IMG_CHANNELS"]), net_cfg, cfg["NETWORK_SETTINGS"]["N_CLASSES"])
-   print("CONSOLE: INTIALIZED CREATED")
+   print("CONSOLE: MODEL INTIALIZED")
    predictor.load_state_dict(torch.load(cfg["INFERENCE_MODE"]["MODEL_WEIGHTS_PATH"]))
    print("CONSOLE: MODEL LOADED")
+   return predictor
 
 
 def main():
    config = configparser.ConfigParser()
    config.read(os.path.join(CONFIG_PATH))
-
    
+   assert config["NETWORK_SETTINGS"]["N_CLASSES"] != "", "Run the train_model.py or specify the number of classes in {}".format(CONFIG_PATH)
 
    if "INFERENCE_MODE" in config.sections():
       predictor = model_factory(config)
