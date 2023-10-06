@@ -1,5 +1,5 @@
 # Explor1
-**WARNING. EXAMPLE FOLDER STRUCTURE DOES NOT CONTAIN PROPER DATA**
+**WARNING. EXAMPLE FOLDER STRUCTURE DOES NOT CONTAIN PROPER DATA**<br>
 CS2613 Exploration Project 1
 To simply run the model on basic settings - run main.py<br>
 See wiki page for more details.<br>
