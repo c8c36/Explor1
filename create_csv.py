@@ -8,7 +8,6 @@ def make_csv(folder_path, file_name):
    with open("{}.csv".format(file_name), mode = "w", newline = "") as csvfile:
       writer = csv.writer(csvfile)
       writer.writerow(("image", "label"))
-      folder_path_file = ""
       for directory in os.listdir(os.path.join(folder_path)):
          for file in os.listdir(os.path.join(folder_path, directory)):
             writer.writerow((os.path.join(folder_path, directory, file), directory))

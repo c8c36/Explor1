@@ -31,3 +31,21 @@ class FolderDataset(Dataset):
       image = self.transform(image)
       label = self.target_transform(label)
       return image, label
+   
+
+class InferenceFolder(Dataset):
+   def __init__(self, pathing, transform = None):
+      if transform is not None:
+         self.transform = transform
+      else:
+         self.transform = lambda x: x
+      
+      self.pics_path = []
+      for pic in os.listdir(os.path.join(pathing)):
+         self.pics_path.append(os.path.join(pathing, pic))
+      
+   def __len__(self):
+      return len(self.pics_path)
+
+   def __getitem__(self, idx):
+      return self.transform(read_image(self.pics_path[idx]))

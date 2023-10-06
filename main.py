@@ -5,7 +5,9 @@ import torch
 import utils
 from utils import CONFIG_PATH
 import model
-
+import torchvision
+from torchvision import transforms
+from train_model import read_size
 
 def model_factory(cfg):
    if cfg["NETWORK_SETTINGS"]["NETWORK_SIZE"] == "config_t":
@@ -32,13 +34,28 @@ def main():
    config = configparser.ConfigParser()
    config.read(os.path.join(CONFIG_PATH))
    
-   assert config["NETWORK_SETTINGS"]["N_CLASSES"] != "", "Run the train_model.py or specify the number of classes in {}".format(CONFIG_PATH)
+   assert config["NETWORK_SETTINGS"]["N_CLASSES"] != "", "Run the create_csv.py or specify the number of classes in {}".format(CONFIG_PATH)
 
    if "INFERENCE_MODE" in config.sections():
       predictor = model_factory(config)
    else:
       raise configparser.NoSectionError("INFERENCE_MODE")
 
+   if config["NETWORK_SETTINGS"]["custom_dataset"] == "0":
+      dataset = utils.InferenceFolder("example_data", 
+                                      transforms.Compose([transforms.ToTensor(), 
+                                                          transforms.Grayscale(), 
+                                                          transforms.Resize((64, 64), antialias = False), 
+                                                          transforms.Normalize([0.5], [0.5])]))
+   else:
+      dataset = utils.InferenceFolder(config["INFERENCE_MODE"]["inference_data_path"],
+                                      transforms.Compose([transforms.ToTensor(), 
+                                                          transforms.Resize(read_size(), antialias = False), 
+                                                          transforms.Normalize([0.5 for i in range(int(config["NETWORK_SETTINGS"]["IMG_CHANNELS"]))],
+                                                                               [0.5 for i in range(int(config["NETWORK_SETTINGS"]["IMG_CHANNELS"]))])]))
+   
+   for i in range(len(dataset)):
+      torchvision.io.write_png(dataset[i], os.path.join())
 
 if __name__ == "__main__":
    try:

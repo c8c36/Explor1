@@ -45,7 +45,7 @@ def train_loop(dataloader, model, loss_fn, optimizer):
     loss.backward()
     optimizer.step()
 
-    if batch % config["NETWORK_SETTINGS"]["PRINT_FREQUENCY"] == 0:
+    if batch % int(config["NETWORK_SETTINGS"]["PRINT_FREQUENCY"]) == 0:
       loss, current = loss.item(), batch * len(X)
       print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
 
@@ -72,8 +72,8 @@ def test_loop(dataloader, model, loss_fn):
 
 train_dataset, test_dataset = factory_datasets()
 
-train_loader = DataLoader(train_dataset, 128, True, drop_last = True)
-test_loader = DataLoader(test_dataset, 128, True, drop_last = True)
+train_loader = DataLoader(train_dataset, int(config["NETWORK_SETTINGS"]["batch_size"]), True, drop_last = True)
+test_loader = DataLoader(test_dataset, int(config["NETWORK_SETTINGS"]["batch_size"]), True, drop_last = True)
 
 if config["NETWORK_SETTINGS"]["NETWORK_SIZE"] == "config_t":
     net_cfg = model.config_t
@@ -91,9 +91,9 @@ else:
 network = ConvNetModel(1, net_cfg, len(train_dataset.classes))
 loss_fn = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(network.parameters(), 5e-5)
-scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, config["NETWORK_SETTINGS"]["N_EPOCHS"])
+scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, int(config["NETWORK_SETTINGS"]["N_EPOCHS"]))
 
-for _ in range(config["NETWORK_SETTINGS"]["N_EPOCHS"]):
+for _ in range(int(config["NETWORK_SETTINGS"]["N_EPOCHS"])):
   print("Epoch: ", _+1)
   train_loop(train_loader, network, loss_fn, optimizer)
   test_loop(test_loader, network, loss_fn)
