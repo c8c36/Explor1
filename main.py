@@ -27,14 +27,14 @@ def main():
    config.read(os.path.join(CONFIG_PATH))
 
    # If not custom dataset -> MNIST
-   if config["NETWORK_SETTINGS"]["custom_dataset"] == "0":
+   if config["PATHS"]["custom_dataset"] == "0":
       dataset = utils.FolderDataset("inference", utils.get_mnist_transform(), inference_folder_path = config["NETWORK_SETTINGS"]["inference_data_path"])
       labels_map = torchvision.datasets.MNIST.classes
       n_classes = len(torchvision.datasets.MNIST.classes)
    else:
       dataset = utils.FolderDataset("inference", 
                                     utils.get_default_transform(*read_size, n_channels = int(config["NETWORK_SETTINGS"]["img_channels"])), 
-                                    inference_folder_path = config["NETWORK_SETTINGS"]["inference_data_path"])
+                                    inference_folder_path = config["INFERENCE_MODE"]["inference_data_path"])
       labels_map = utils.FolderDataset().labels_map
       n_classes = len(utils.FolderDataset().labels_map)
    
