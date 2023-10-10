@@ -1,6 +1,5 @@
 import os
 pathify = lambda x: os.path.join(x)
-import traceback
 import csv
 import configparser
 from utils import CONFIG_PATH, CORE_FOLDER
