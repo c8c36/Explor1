@@ -17,4 +17,11 @@ test_folder
 |----------class_name_foldern <- testing pictures of class 3 go here
 ```
 **NOTE: demo_test_data and demo_train_data DOES NOT CONTAIN PROPER DATA. IT IS AN EXAMPLE OF STRUCTURE THAT MUST BE FOLLOWED**<br>
-**ADDITIONALLY, IT SERVES AS A TEST FOR create_csv.py**
+**ADDITIONALLY, IT SERVES AS A TEST FOR create_csv.py**<br>
+Dependencies:
+```
+matplotlib 3.7.2
+torch  2.0.1+cpu
+torchvision  0.15.2+cpu
+pandas  2.1.1
+```

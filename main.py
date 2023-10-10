@@ -7,6 +7,7 @@ from utils import CONFIG_PATH
 import model
 import torchvision
 from train_model import read_size
+import matplotlib.pyplot as plt
 
 def model_factory(cfg, n_classes):
    net_cfg = cfg["NETWORK_SETTINGS"]["network_size"].lower().strip()
@@ -48,10 +49,14 @@ def main():
    predictor.to(model.DEVICE)
    with torch.no_grad():
       for X in inference_dataloader:
-         X.to(model.DEVICE)
+         X = X.to(model.DEVICE)
          prediction = predictor(X).softmax(-1).argmax(-1)
-         for image, class_num in zip(X, prediction):
-            torchvision.io.write_png(image, os.path.join(output_path, "{}".format(labels_map[class_num])))
+         for image, class_name in zip(X, prediction):
+            plt.figure()
+            plt.xlabel(class_name)
+            plt.imshow(image.permute(1, 2, 0).detach().numpy())
+            plt.savefig(os.path.join(output_path, "{}.png".format(class_name)))
+            plt.close()
 
 if __name__ == "__main__":
    main()
