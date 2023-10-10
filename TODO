@@ -1,6 +1,0 @@
-Overall:
-   * Test everything
-   * Provide example_data
-   * Provide pretrained weights (look in google disk to see if it is already there)
-   * Test demo regime
-   * Test demo training sequence with dogs-cats-mouse data 
