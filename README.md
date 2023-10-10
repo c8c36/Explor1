@@ -1,7 +1,7 @@
 # Explor1
 To use pretrained weights: download from the [link](https://drive.google.com/file/d/1ISIjILjfet2XyBe-wrFzD0WBavlWkDEV/view?usp=sharing) pretrained weights, and drop them into the same folder where main.py is located<br>
 CS2613 Exploration Project 1
-To simply run the demo of the model on basic settings - run main.py<br>
+To simply run the demo of the model on basic settings - run main.py after downloading pretrained weights<br>
 See the wiki page for more details.<br>
 Important note on file structure:<br>
 ```
@@ -16,3 +16,5 @@ test_folder
 ...
 |----------class_name_foldern <- testing pictures of class 3 go here
 ```
+**NOTE: demo_test_data and demo_train_data DOES NOT CONTAIN PROPER DATA. IT IS AN EXAMPLE OF STRUCTURE THAT MUST BE FOLLOWED**<br>
+**ADDITIONALLY, IT SERVES AS A TEST FOR create_csv.py**
