@@ -20,7 +20,6 @@ test_folder
 **ADDITIONALLY, IT SERVES AS A TEST FOR create_csv.py**<br>
 Dependencies:
 ```
-matplotlib 3.7.2
 torch  2.0.1+cpu
 torchvision  0.15.2+cpu
 pandas  2.1.1
