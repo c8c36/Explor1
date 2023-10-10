@@ -1,8 +1,8 @@
 # Explor1
-**WARNING. EXAMPLE FOLDER STRUCTURE DOES NOT CONTAIN PROPER DATA**<br>
+To use pretrained weights: download from the [link](https://drive.google.com/file/d/1ISIjILjfet2XyBe-wrFzD0WBavlWkDEV/view?usp=sharing) pretrained weights, and drop them into the same folder where main.py is located<br>
 CS2613 Exploration Project 1
-To simply run the model on basic settings - run main.py<br>
-See wiki page for more details.<br>
+To simply run the demo of the model on basic settings - run main.py<br>
+See the wiki page for more details.<br>
 Important note on file structure:<br>
 ```
 train_folder
