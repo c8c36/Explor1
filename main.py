@@ -17,7 +17,7 @@ def model_factory(cfg, n_classes):
 
    predictor = model.ConvNetModel(int(cfg["NETWORK_SETTINGS"]["img_channels"]), net_cfg, n_classes)
    print("CONSOLE: MODEL INTIALIZED")
-   predictor.load_state_dict(torch.load(cfg["INFERENCE_MODE"]["model_weights_path"]))
+   predictor.load_state_dict(torch.load(cfg["INFERENCE_MODE"]["model_weights_path"], map_location = model.DEVICE))
    print("CONSOLE: MODEL LOADED")
    return predictor
 
@@ -28,15 +28,15 @@ def main():
 
    # If not custom dataset -> MNIST
    if config["PATHS"]["custom_dataset"] == "0":
-      dataset = utils.FolderDataset("inference", utils.get_mnist_transform(), inference_folder_path = config["NETWORK_SETTINGS"]["inference_data_path"])
+      dataset = utils.FolderDataset("inference", utils.get_mnist_transform(), inference_folder_path = config["INFERENCE_MODE"]["inference_data_path"])
       labels_map = torchvision.datasets.MNIST.classes
       n_classes = len(torchvision.datasets.MNIST.classes)
    else:
       dataset = utils.FolderDataset("inference", 
                                     utils.get_default_transform(*read_size, n_channels = int(config["NETWORK_SETTINGS"]["img_channels"])), 
                                     inference_folder_path = config["INFERENCE_MODE"]["inference_data_path"])
-      labels_map = utils.FolderDataset().labels_map
-      n_classes = len(utils.FolderDataset().labels_map)
+      labels_map = utils.FolderDataset().get_labels_map()
+      n_classes = len(utils.FolderDataset().get_labels_map())
    
    inference_dataloader = DataLoader(dataset, int(config["INFERENCE_MODE"]["batch_size"]), False)
 
@@ -49,14 +49,11 @@ def main():
    predictor.to(model.DEVICE)
    with torch.no_grad():
       for X in inference_dataloader:
+         print(X.shape)
+         print(X)
          X = X.to(model.DEVICE)
-         prediction = predictor(X).softmax(-1).argmax(-1)
-         for image, class_name in zip(X, prediction):
-            plt.figure()
-            plt.xlabel(class_name)
-            plt.imshow(image.permute(1, 2, 0).detach().numpy())
-            plt.savefig(os.path.join(output_path, "{}.png".format(class_name)))
-            plt.close()
+         prediction = predictor(X).softmax(-1)#.argmax(-1)
+         print(prediction)
 
 if __name__ == "__main__":
    main()

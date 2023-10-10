@@ -4,15 +4,16 @@ import os
 import pandas as pd
 import csv
 from torchvision import transforms
+from PIL import Image
 
 CONFIG_PATH = "config.ini"
 CORE_FOLDER = "temp"
 
 def get_default_transform(height, width, n_channels, *additional_transforms):
    return transforms.Compose([transforms.ToTensor(), 
-                                          transforms.Resize((height, width), antialias = False), 
-                                          transforms.Normalize([0.5 for i in range(n_channels)], [0.5 for i in range(n_channels)]), 
-                                          *additional_transforms])
+                              transforms.Resize((height, width), antialias = False), 
+                              transforms.Normalize([0.5 for i in range(n_channels)], [0.5 for i in range(n_channels)]), 
+                              *additional_transforms])
 
 def get_mnist_transform(*additional_transforms):
    return transforms.Compose([transforms.ToTensor(), 
@@ -23,14 +24,14 @@ def get_mnist_transform(*additional_transforms):
 
 class FolderDataset(Dataset):
    def _test_train_get_item(self, idx):
-      image = read_image(os.path.join(self.file.iloc[idx, 0]))
+      image = Image.open(os.path.join(self.file.iloc[idx, 0]), 'r')
       label = self.file.iloc[idx, 1]
       image = self.transform(image)
       label = self.target_transform(label)
       return image, label
    
    def _inference_get_item(self, idx):
-      image = read_image(os.path.join(self.file[idx]))
+      image = Image.open(os.path.join(self.file[idx]), 'r')
       return self.transform(image)
 
    def __init__(self, regime = "train", transform = None, target_transform = None, inference_folder_path = None):
@@ -64,8 +65,6 @@ class FolderDataset(Dataset):
          self.file = []
          for pic in os.listdir(os.path.join(inference_folder_path)):
             self.file.append(os.path.join(inference_folder_path, pic))
-      
-      self.labels_map = self.get_labels_map()
 
    def __len__(self):
       return len(self.file)

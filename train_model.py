@@ -27,7 +27,7 @@ def factory_datasets():
       img_transforms = utils.get_default_transform(*read_size(), n_channels = int(config["NETWORK_SETTINGS"]["img_channels"]))
       train_dataset = utils.FolderDataset("train", img_transforms)
       test_dataset = utils.FolderDataset("test", img_transforms)
-      return train_dataset, test_dataset, len(train_dataset.labels_map.keys())
+      return train_dataset, test_dataset, len(train_dataset.get_labels_map.keys())
 
 def train_loop(dataloader, model, loss_fn, optimizer):
    size = len(dataloader.dataset)

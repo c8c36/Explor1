@@ -1,5 +1,5 @@
 # Explor1
-To use pretrained weights: download from the [link](https://drive.google.com/file/d/1ISIjILjfet2XyBe-wrFzD0WBavlWkDEV/view?usp=sharing) pretrained weights, and drop them into the same folder where main.py is located<br>
+To use pretrained weights: download from the [link](https://drive.google.com/file/d/1ajMqzqscDv9B2S5Xmtf9bbQeL-mH11lY/view?usp=sharing) pretrained weights, and drop them into the same folder where main.py is located<br>
 CS2613 Exploration Project 1
 To simply run the demo of the model on basic settings - run main.py after downloading pretrained weights<br>
 See the wiki page for more details.<br>
@@ -24,4 +24,5 @@ matplotlib 3.7.2
 torch  2.0.1+cpu
 torchvision  0.15.2+cpu
 pandas  2.1.1
+PIL 10.0.0
 ```
