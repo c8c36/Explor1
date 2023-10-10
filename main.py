@@ -51,7 +51,7 @@ def main():
          X.to(model.DEVICE)
          prediction = predictor(X).softmax(-1).argmax(-1)
          for image, class_num in zip(X, prediction):
-            torchvision.io.write_png(X, os.path.join(output_path, "{}".format(labels_map[class_num])))
+            torchvision.io.write_png(image, os.path.join(output_path, "{}".format(labels_map[class_num])))
 
 if __name__ == "__main__":
    main()

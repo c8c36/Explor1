@@ -102,7 +102,7 @@ def main():
       print("Save model? (y/n)")
       user_input = input()
       if user_input != "n":
-         torch.save(network.parameters(), os.path.join(config["NETWORK_SETTINGS"]["model_save_path"]))
+         torch.save(network.state_dict(), os.path.join(config["NETWORK_SETTINGS"]["model_save_path"]))
          print("Model saved")
 
 if __name__ == "__main__":
