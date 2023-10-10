@@ -1,7 +1,6 @@
-- FINISH main.py INFERENCE
-   - Add inference folder
-   - Add saving of the output
-- PRETRAIN WEIGHTS
-   - train the model on MNIST
-- PROVIDE INFERENCE EXAMPLES
-   - And test em
+Overall:
+   * Test everything
+   * Provide example_data
+   * Provide pretrained weights (look in google disk to see if it is already there)
+   * Test demo regime
+   * Test demo training sequence with dogs-cats-mouse data 

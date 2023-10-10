@@ -2,6 +2,7 @@ import configparser
 import os
 import traceback
 import torch
+from torch.utils.data import DataLoader
 import utils
 from utils import CONFIG_PATH
 import model
@@ -10,22 +11,14 @@ from torchvision import transforms
 from train_model import read_size
 
 def model_factory(cfg):
-   if cfg["NETWORK_SETTINGS"]["NETWORK_SIZE"] == "config_t":
-      net_cfg = model.config_t
-   elif cfg["NETWORK_SETTINGS"]["NETWORK_SIZE"] == "config_s": 
-      net_cfg = model.config_s
-   elif cfg["NETWORK_SETTINGS"]["NETWORK_SIZE"] == "config_b": 
-      net_cfg = model.config_b
-   elif cfg["NETWORK_SETTINGS"]["NETWORK_SIZE"] == "config_l": 
-      net_cfg = model.config_l
-   elif cfg["NETWORK_SETTINGS"]["NETWORK_SIZE"] == "config_xl":
-      net_cfg = model.config_xl
-   else:
-      raise ValueError()
+   net_cfg = cfg["NETWORK_SETTINGS"]["network_size"].lower().strip()
+   if net_cfg not in model.configs.keys():
+      raise ValueError("network_size error. Expected one of {}".format(model.configs.keys()))
+   net_cfg = model.configs[net_cfg]
 
-   predictor = model.ConvNetModel(int(cfg["NETWORK_SETTINGS"]["IMG_CHANNELS"]), net_cfg, cfg["NETWORK_SETTINGS"]["N_CLASSES"])
+   predictor = model.ConvNetModel(int(cfg["NETWORK_SETTINGS"]["img_channels"]), net_cfg, cfg["NETWORK_SETTINGS"]["n_classes"])
    print("CONSOLE: MODEL INTIALIZED")
-   predictor.load_state_dict(torch.load(cfg["INFERENCE_MODE"]["MODEL_WEIGHTS_PATH"]))
+   predictor.load_state_dict(torch.load(cfg["INFERENCE_MODE"]["model_weights_path"]))
    print("CONSOLE: MODEL LOADED")
    return predictor
 
@@ -33,44 +26,32 @@ def model_factory(cfg):
 def main():
    config = configparser.ConfigParser()
    config.read(os.path.join(CONFIG_PATH))
-   
-   assert config["NETWORK_SETTINGS"]["N_CLASSES"] != "", "Run the create_csv.py or specify the number of classes in {}".format(CONFIG_PATH)
 
-   if "INFERENCE_MODE" in config.sections():
-      predictor = model_factory(config)
-   else:
-      raise configparser.NoSectionError("INFERENCE_MODE")
+   predictor = model_factory(config)
 
+   # If not custom dataset -> MNIST
    if config["NETWORK_SETTINGS"]["custom_dataset"] == "0":
-      dataset = utils.InferenceFolder("example_data", 
-                                      transforms.Compose([transforms.ToTensor(), 
-                                                          transforms.Grayscale(), 
-                                                          transforms.Resize((64, 64), antialias = False), 
-                                                          transforms.Normalize([0.5], [0.5])]))
+      dataset = utils.FolderDataset("inference", utils.get_mnist_transform(), inference_folder_path = config["NETWORK_SETTINGS"]["inference_data_path"])
+      labels_map = torchvision.datasets.MNIST.classes
    else:
-      dataset = utils.InferenceFolder(config["INFERENCE_MODE"]["inference_data_path"],
-                                      transforms.Compose([transforms.ToTensor(), 
-                                                          transforms.Resize(read_size(), antialias = False), 
-                                                          transforms.Normalize([0.5 for i in range(int(config["NETWORK_SETTINGS"]["IMG_CHANNELS"]))],
-                                                                               [0.5 for i in range(int(config["NETWORK_SETTINGS"]["IMG_CHANNELS"]))])]))
+      dataset = utils.FolderDataset("inference", 
+                                    utils.get_default_transform(*read_size, n_channels = int(config["NETWORK_SETTINGS"]["img_channels"])), 
+                                    inference_folder_path = config["NETWORK_SETTINGS"]["inference_data_path"])
+      labels_map = utils.FolderDataset().labels_map
    
-   for i in range(len(dataset)):
-      torchvision.io.write_png(dataset[i], os.path.join())
+   inference_dataloader = DataLoader(dataset, int(config["INFERENCE_MODE"]["batch_size"]), False)
+
+   output_path = os.path.join(config["INFERENCE_MODE"]["output_folder"])
+   if not os.path.exists(output_path):
+      os.mkdir(output_path)
+
+   
+
+   for X in inference_dataloader:
+      prediction = predictor(X).softmax(-1).argmax(-1)
+      print(labels_map[prediction])
+
+
 
 if __name__ == "__main__":
-   try:
-      main()
-   except FileNotFoundError as fe:
-      print("Error. Config file not found. Expected {}".format(CONFIG_PATH))
-      traceback.print_exc()
-   
-   except configparser.NoSectionError as cfge:
-      print("Error. No such section. INFERENCE_MODE section not found in the config file provided")
-      traceback.print_exc()
-   
-   except ValueError as ve:
-      print("Error. Wrong network config value. Verify the spelling of NETWORK_SIZE field in NETWORK_SETTINGS section of {}".format(CONFIG_PATH))
-   
-   except Exception as e:
-      print("Error. GENERAL EXCEPTION CAUGHT")
-      traceback.print_exc()
+   main()
